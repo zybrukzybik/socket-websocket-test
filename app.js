@@ -6,6 +6,7 @@ const Koa = require('koa')
 const app = new Koa()
 
 const PORT = process.env.PORT
+const wsProtocol = process.env.WS_PROTOCOL
 
 app.use(ctx => {
     ctx.body = 'Koa WebSockets'
@@ -16,6 +17,7 @@ const server = require('http').createServer(app.callback())
 server.listen(PORT, () => {
     console.log(`Server started at http://localhost:${PORT}`)
 })
+
 
 wsServer = new WebSocketServer({
     httpServer: server,
@@ -36,22 +38,32 @@ wsServer.on('request', function (request) {
         return;
     }
 
-    const connection = request.accept('chat', request.origin)
-    console.log((new Date()) + ' connection accepted')
+    if (request.requestedProtocols.indexOf(wsProtocol) === -1) {
+        request.reject(412, 'Wrong protocol')
+        console.log('Wrong protocol')
+        return;
+    }
 
-    connection.on('message', function (message) {
-        if (message.type === 'utf8') {
-            console.log(`Received message: ${message.utf8Data}`)
+        const connection = request.accept('chat', request.origin)
+        console.log((new Date()) + ' connection accepted')
 
-            connection.sendUTF(message.utf8Data)
-        } else if (message.type === 'binary') {
-            console.log(`Received binary message: ${message.binaryData.length} bytes`)
+        connection.on('message', function (message) {
+            if (message.type === 'utf8') {
+                console.log(`Received message: ${message.utf8Data}`)
 
-            connection.sendBytes(message.binaryData)
-        }
-    })
+                connection.sendUTF(message.utf8Data)
+            } else if (message.type === 'binary') {
+                console.log(`Received binary message: ${message.binaryData.length} bytes`)
 
-    connection.on('close', function (reasonCode, description) {
-        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected')
-    })
+                connection.sendBytes(message.binaryData)
+            }
+        })
+
+        connection.on('error', (error) => {
+            console.log(`Socket error: ${error.message}`)
+        })
+
+        connection.on('close', function (reasonCode, description) {
+            console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected')
+        })
 })
