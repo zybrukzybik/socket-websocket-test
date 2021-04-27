@@ -1,0 +1,21 @@
+{
+  "name": "socket-ws-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "koa": "^2.13.1",
+    "websocket": "^1.0.34"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
