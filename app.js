@@ -22,7 +22,20 @@ wsServer = new WebSocketServer({
     autoAcceptConnections: false
 })
 
+function originIsAllowed(origin) {
+    console.log(`Origin: ${origin}`)
+    // put logic here to detect whether the specified origin is allowed.
+    return true;
+}
+
 wsServer.on('request', function (request) {
+    if (!originIsAllowed(request.origin)) {
+        // Make sure we only accept requests from an allowed origin
+        request.reject();
+        console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
+        return;
+    }
+
     const connection = request.accept('echo-protocol', request.origin)
     console.log((new Date()) + ' connection accepted')
 
