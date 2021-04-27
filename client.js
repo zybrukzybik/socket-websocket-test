@@ -2,8 +2,8 @@ require('dotenv').config()
 
 const WebSocketClient = require('websocket').client;
 
-const HOST = 'http://localhost'
-// const HOST = process.env.HOST
+// const HOST = 'http://localhost'
+const HOST = process.env.HOST
 const PORT = process.env.PORT
 
 const client = new WebSocketClient();
@@ -43,4 +43,4 @@ client.on('connect', function (connection) {
     sendNumber();
 });
 
-client.connect(`${HOST}:${PORT}/`, 'echo-protocol');
+client.connect(`${HOST}:${PORT}/`, 'chat');

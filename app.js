@@ -36,7 +36,7 @@ wsServer.on('request', function (request) {
         return;
     }
 
-    const connection = request.accept('echo-protocol', request.origin)
+    const connection = request.accept('chat', request.origin)
     console.log((new Date()) + ' connection accepted')
 
     connection.on('message', function (message) {
